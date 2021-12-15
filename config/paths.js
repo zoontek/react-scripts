@@ -60,6 +60,7 @@ const resolveModule = (resolveFn, filePath) => {
 
 // config after eject: we're in ./config/
 module.exports = {
+  babelExtensions: resolveApp("babel-extensions"),
   dotenv: resolveApp(".env"),
   appPath: resolveApp("."),
   appBuild: resolveApp(buildPath),
@@ -86,6 +87,7 @@ const resolveOwn = (relativePath) =>
 
 // config before eject: we're in ./node_modules/react-scripts/config/
 module.exports = {
+  babelExtensions: resolveApp("babel-extensions"),
   dotenv: resolveApp(".env"),
   appPath: resolveApp("."),
   appBuild: resolveApp(buildPath),

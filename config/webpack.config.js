@@ -95,11 +95,30 @@ const hasJsxRuntime = (() => {
   }
 })();
 
+const getBabelExtensions = () => {
+  const defaultConfig = {
+    include: [],
+    plugins: [],
+  };
+
+  try {
+    return {
+      ...defaultConfig,
+      ...require(paths.babelExtensions),
+    };
+  } catch (error) {
+    return defaultConfig;
+  }
+};
+
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
+
+  // Allow babel-loader config overrides
+  const babelExtensions = getBabelExtensions(paths.babelExtensions);
 
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
@@ -416,7 +435,7 @@ module.exports = function (webpackEnv) {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              include: paths.appSrc,
+              include: [paths.appSrc, ...babelExtensions.include],
               loader: require.resolve("babel-loader"),
               options: {
                 customize: require.resolve(
@@ -451,6 +470,7 @@ module.exports = function (webpackEnv) {
                 ),
                 // @remove-on-eject-end
                 plugins: [
+                  ...babelExtensions.plugins,
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
                     require.resolve("react-refresh/babel"),
